@@ -18,12 +18,12 @@ COLOR_ALG = COLOR_ALG_OPTIONS[1]  # <---- set colorizer algorithm
 COLORS = [
     (0, 0, 0),        # black
     (255, 255, 255),  # white
-    #(128, 128, 128),  # gray
+    (128, 128, 128),  # gray
     (255, 0, 0),      # red
-    #(0, 0, 255),      # blue
-    #(0, 255, 0),      # green
-    #(50, 0, 50),      # purple
+    (0, 0, 255),      # blue
+    (0, 255, 0),      # green
+    (50, 0, 50),      # purple
     (255, 255, 0),    # yellow
-    #(100, 65, 0),     # orange
-    #(165, 42, 42),    # brown
+    (100, 65, 0),     # orange
+    (165, 42, 42),    # brown
 ]
