@@ -1,40 +1,17 @@
 import numpy as np
-import matplotlib.pyplot as plt
-plt.style.use('seaborn-dark')
 from skimage import io
 from math import ceil
 import sys
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-dark')
 import utils
-
-# constants
-DOWNLOADS_FOLDER = r'C:\Users\aberr\Downloads'
-TEST_IMG = DOWNLOADS_FOLDER + r'\ironman.jpg'
-POST_IT_SIZE = (2,1.5) # inches
-SIDE_LENGTH = 48 # inches
-GRID_STEP = 5
-GRID_COLOR = 'black'
-GRID_WEIGHT = 1.0
-
-# colors
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-BROWN = (165, 42, 42)
-COLORS = [RED, BLUE, YELLOW, BLACK, WHITE]
-# COLORS = [
-#     (255,126,185),
-#     (255,101,163),
-#     (122,252,255),
-#     (254,255,156),
-#     (255,247,64)
-# ]
+from settings import *
 
 
 def partition(img, note_size: tuple, height:float = None, width:float = None):
     '''
-    Type description here.
+    Partition image into a series of gridsquares representing post-it notes and color
+    each with a new color.
 
     Args:
         img (ndarray): image array to partition with shape (height, width, 3)
@@ -91,7 +68,7 @@ def partition(img, note_size: tuple, height:float = None, width:float = None):
             gridsquare = img[y0:y1, x0:x1]
 
             if gridsquare.any():
-                img[y0:y1, x0:x1] = colorize(gridsquare)
+                img[y0:y1, x0:x1] = utils.colorize(gridsquare)
 
 
     # create plots
@@ -134,29 +111,13 @@ def partition(img, note_size: tuple, height:float = None, width:float = None):
 
 
 
-def colorize(gridsquare):
-    '''
-    Type description here.
-
-    Args:
-        gridspace (ndarry): array representing a gridspace
-    '''
-
-    dist2 = lambda a,b: (a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2
-    avg_color = np.mean(gridsquare, axis=(0,1))
-    color_dists = list(map(lambda x: dist2(avg_color, x), COLORS))
-
-    return COLORS[np.argmin(color_dists)]
-
-
-
 if __name__ == '__main__':
 
 
     # parse inputs
     args = sys.argv[1:]
     filename, note_size, width, height, savepath = utils.parse(args)
-    img = io.imread(DOWNLOADS_FOLDER + r'\{}'.format(filename))
+    img = io.imread(IMAGE_FOLDER + r'\{}'.format(filename))
 
 
     # partition image into grid art
@@ -164,7 +125,7 @@ if __name__ == '__main__':
 
 
     if savepath:
-        fig.savefig(DOWNLOADS_FOLDER + r'\{}'.format(savepath), dpi=200)
+        fig.savefig(IMAGE_FOLDER + r'\{}'.format(savepath), dpi=200)
 
 
     # display output data
@@ -176,3 +137,7 @@ if __name__ == '__main__':
     print('\t{} notes x {} notes'.format(num_notes_x, num_notes_y))
     print('Total Notes Required: {}'.format(total_notes))
     print('\n')
+
+
+    if AUTO_SHOW_GRID:
+        plt.show()
