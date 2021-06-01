@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 plt.style.use('seaborn-dark')
 from skimage import io
 from math import ceil
+import sys
+import utils
 
 # constants
 DOWNLOADS_FOLDER = r'C:\Users\aberr\Downloads'
@@ -65,10 +67,10 @@ def partition(img, note_size: tuple, height:float = None, width:float = None):
 
 
     # calculate number of notes and pixels per note for each dimension
-    num_notes_x = int(width / note_size_x)
-    num_notes_y = int(height / note_size_y)
-    px_per_note_x = int(imgx / num_notes_x)
-    px_per_note_y = int(imgy / num_notes_y)
+    num_notes_x = ceil(width / note_size_x)
+    num_notes_y = ceil(height / note_size_y)
+    px_per_note_x = ceil(imgx / num_notes_x)
+    px_per_note_y = ceil(imgy / num_notes_y)
 
 
     # calculate output data
@@ -127,18 +129,7 @@ def partition(img, note_size: tuple, height:float = None, width:float = None):
     axes[1].imshow(img)
     axes[2].imshow(img)
 
-    plt.show()
-
-    #fig.savefig(DOWNLOADS_FOLDER + r'\designs.jpg', dpi=200)
-
-    # print('Output Dimensions:')
-    # print('\t{}" x {}"'.format(output_width, output_height))
-    # print('\t{} notes x {} notes'.format(num_notes_x, num_notes_y))
-    # print('Total Notes Required: {}'.format(total_num_notes))
-
     return fig, (output_width, output_height), (num_notes_x, num_notes_y), total_num_notes
-
-
 
 
 
@@ -154,11 +145,34 @@ def colorize(gridsquare):
     dist2 = lambda a,b: (a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2
     avg_color = np.mean(gridsquare, axis=(0,1))
     color_dists = list(map(lambda x: dist2(avg_color, x), COLORS))
+
     return COLORS[np.argmin(color_dists)]
 
 
 
 if __name__ == '__main__':
 
-    img = io.imread(TEST_IMG)
-    partition(img, POST_IT_SIZE, height=SIDE_LENGTH)
+
+    # parse inputs
+    args = sys.argv[1:]
+    filename, note_size, width, height, savepath = utils.parse(args)
+    img = io.imread(DOWNLOADS_FOLDER + r'\{}'.format(filename))
+
+
+    # partition image into grid art
+    fig, dims_inches, dims_notes, total_notes = partition(img, note_size, width=width, height=height)
+
+
+    if savepath:
+        fig.savefig(DOWNLOADS_FOLDER + r'\{}'.format(savepath), dpi=200)
+
+
+    # display output data
+    output_width, output_height = dims_inches
+    num_notes_x, num_notes_y = dims_notes
+
+    print('\nOutput Dimensions:')
+    print('\t{}" x {}"'.format(output_width, output_height))
+    print('\t{} notes x {} notes'.format(num_notes_x, num_notes_y))
+    print('Total Notes Required: {}'.format(total_notes))
+    print('\n')
